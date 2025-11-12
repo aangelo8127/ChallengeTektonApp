@@ -20,13 +20,13 @@ public class HistoryServiceImpl implements IHistoryService {
     @Async
     @Override
     public void registerAsync(String endpoint, String params, String result, String error) {
-        HistoryRecord record = new HistoryRecord();
-        record.setDate(LocalDateTime.now());
-        record.setEndpoint(endpoint);
-        record.setParams(params);
-        record.setResult(result);
-        record.setError(error);
-        repository.save(record);
+        HistoryRecord historyRecord = new HistoryRecord();
+        historyRecord.setDate(LocalDateTime.now());
+        historyRecord.setEndpoint(endpoint);
+        historyRecord.setParams(params);
+        historyRecord.setResult(result);
+        historyRecord.setError(error);
+        repository.save(historyRecord);
     }
 
     @Override

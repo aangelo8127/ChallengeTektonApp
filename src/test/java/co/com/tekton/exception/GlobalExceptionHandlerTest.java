@@ -5,33 +5,36 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import static co.com.tekton.util.TestConstantsUtils.BAD_REQUEST_MESSAGE;
+import static co.com.tekton.util.TestConstantsUtils.ERROR_INTERNAL_MESSAGE;
 import static org.junit.jupiter.api.Assertions.*;
 
 
 class GlobalExceptionHandlerTest {
 
-    private GlobalExceptionHandler handler;
+    private GlobalExceptionHandler globalExceptionHandler;
 
     @BeforeEach
     void setUp() {
-        handler = new GlobalExceptionHandler();
+        globalExceptionHandler = new GlobalExceptionHandler();
     }
 
     @Test
     void testHandleRuntimeException() {
-        RuntimeException ex = new RuntimeException("Error interno");
-        ResponseEntity<ErrorResponse> response = handler.handleRuntimeException(ex);
+        RuntimeException ex = new RuntimeException(ERROR_INTERNAL_MESSAGE);
+        ResponseEntity<ErrorResponse> response = globalExceptionHandler.handleRuntimeException(ex);
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-        assertEquals("Error interno", response.getBody().getMessage());
+        assertEquals(ERROR_INTERNAL_MESSAGE, response.getBody().getMessage());
     }
 
     @Test
     void testHandleBadRequest() {
-        IllegalArgumentException ex = new IllegalArgumentException("Parámetro inválido");
-        ResponseEntity<ErrorResponse> response = handler.handleBadRequest(ex);
+        IllegalArgumentException ex = new IllegalArgumentException(BAD_REQUEST_MESSAGE);
+        ResponseEntity<ErrorResponse> response = globalExceptionHandler.handleBadRequest(ex);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertEquals("Parámetro inválido", response.getBody().getMessage());
+        assertEquals(BAD_REQUEST_MESSAGE, response.getBody().getMessage());
     }
 }

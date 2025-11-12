@@ -31,7 +31,6 @@ public class PercentageServiceImpl implements IPercentageService {
             throw new RuntimeException("Respuesta inválida del servicio externo");
         } catch (Exception e) {
             log.warn("Error al obtener porcentaje externo: {}", e.getMessage());
-            // Recuperar valor anterior desde Redis
             var cache = cacheManager.getCache("percentage");
             if (cache != null) {
                 Double cachedValue = cache.get(SimpleKey.EMPTY, Double.class);

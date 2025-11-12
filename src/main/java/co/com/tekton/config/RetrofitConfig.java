@@ -11,7 +11,7 @@ public class RetrofitConfig {
     @Bean
     public Retrofit retrofit() {
         return new Retrofit.Builder()
-                .baseUrl("http://localhost:3000") // Mockoon
+                .baseUrl("http://localhost:3000")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
     }

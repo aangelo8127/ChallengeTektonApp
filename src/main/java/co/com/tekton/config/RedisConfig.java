@@ -14,6 +14,8 @@ import java.time.Duration;
 @EnableCaching
 public class RedisConfig {
 
+    private static final int DEFAULT_TTL_MINUTES = 30;
+
     @Bean
     public LettuceConnectionFactory redisConnectionFactory() {
         return new LettuceConnectionFactory();
@@ -22,7 +24,7 @@ public class RedisConfig {
     @Bean
     public CacheManager cacheManager(LettuceConnectionFactory connectionFactory) {
         RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(Duration.ofMinutes(30));
+                .entryTtl(Duration.ofMinutes(DEFAULT_TTL_MINUTES));
         return RedisCacheManager.builder(connectionFactory)
                 .cacheDefaults(config)
                 .build();

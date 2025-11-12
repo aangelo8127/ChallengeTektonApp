@@ -32,22 +32,22 @@ class HistoryControllerTest {
     @MockBean
     private IHistoryService historyService;
 
-    private HistoryRecord record;
+    private HistoryRecord historyRecord;
 
     @BeforeEach
     void setUp() {
-        record = new HistoryRecord();
-        record.setId(1L);
-        record.setEndpoint("calculate");
-        record.setParams("num1=1, num2=2");
-        record.setResult("resultado=3, porcentaje=10");
-        record.setError(null);
-        record.setDate(java.time.LocalDateTime.now());
+        historyRecord = new HistoryRecord();
+        historyRecord.setId(1L);
+        historyRecord.setEndpoint("calculate");
+        historyRecord.setParams("num1=1, num2=2");
+        historyRecord.setResult("resultado=3, porcentaje=10");
+        historyRecord.setError(null);
+        historyRecord.setDate(java.time.LocalDateTime.now());
     }
 
     @Test
     void testGetHistorySuccess() throws Exception {
-        List<HistoryRecord> records = Collections.singletonList(record);
+        List<HistoryRecord> records = Collections.singletonList(historyRecord);
         Page<HistoryRecord> page = new PageImpl<>(records, PageRequest.of(0, 10), 1);
         when(historyService.getHistory(any(Pageable.class))).thenReturn(page);
 

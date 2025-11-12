@@ -43,41 +43,26 @@ class PercentageServiceImplTest {
 
     @Test
     void testGetDynamicPercentage_Success() throws Exception {
-        // given
         PercentageResponse response = PercentageResponse.builder().percentage(10.0).build();
         when(percentageClient.getPercentage()).thenReturn(mockCall);
         when(mockCall.execute()).thenReturn(Response.success(response));
-
-        // when
         double result = percentageService.getDynamicPercentage();
-
-        // then
         assertEquals(10.0, result);
     }
 
     @Test
     void testGetDynamicPercentage_UsesCachedValueOnFailure() throws Exception {
-        // given
-        // Simulamos valor previo cacheado
         mockCache.put(SimpleKey.EMPTY, 8.5);
-
         when(percentageClient.getPercentage()).thenReturn(mockCall);
         when(mockCall.execute()).thenThrow(new RuntimeException("External service down"));
-
-        // when
         double result = percentageService.getDynamicPercentage();
-
-        // then
         assertEquals(8.5, result);
     }
 
     @Test
     void testGetDynamicPercentage_FailsIfNoCacheAvailable() throws Exception {
-        // given
         when(percentageClient.getPercentage()).thenReturn(mockCall);
         when(mockCall.execute()).thenThrow(new RuntimeException("External down"));
-
-        // when / then
         assertThrows(RuntimeException.class, () -> percentageService.getDynamicPercentage());
     }
 }

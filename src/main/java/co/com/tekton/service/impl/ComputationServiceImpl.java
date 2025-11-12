@@ -24,7 +24,7 @@ public class ComputationServiceImpl implements IComputationService {
             percentage = percentageService.getDynamicPercentage();
         } catch (Exception e) {
             historyService.registerAsync("calculate",
-                    "num1="+firstNumber+", num2="+secondNumber, null,
+                    "firstNumber="+firstNumber+", secondNumber="+secondNumber, null,
                     "No se pudo obtener porcentaje");
             throw new RuntimeException("No se pudo obtener el porcentaje");
         }
@@ -35,8 +35,8 @@ public class ComputationServiceImpl implements IComputationService {
                 .build();
 
         historyService.registerAsync("calculate",
-                "num1="+firstNumber+", num2="+secondNumber,
-                "resultado="+result+", porcentaje="+percentage,
+                "firstNumber="+firstNumber+", secondNumber="+secondNumber,
+                "result="+result+", percentage="+percentage,
                 null);
 
         return response;

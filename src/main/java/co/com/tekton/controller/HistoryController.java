@@ -18,12 +18,15 @@ import co.com.tekton.service.interfaces.IHistoryService;
 public class HistoryController {
 
     private final IHistoryService historyService;
+    private static final String DEFAULT_VALUE_INIT = "0";
+    private static final String DEFAULT_VALUE_FINISH = "10";
+    private static final String PROPERTIES_DATE = "date";
 
     @GetMapping("/history")
     public Page<HistoryRecord> getHistory(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("date").descending());
+            @RequestParam(defaultValue = DEFAULT_VALUE_INIT) int page,
+            @RequestParam(defaultValue = DEFAULT_VALUE_FINISH) int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(PROPERTIES_DATE).descending());
         return historyService.getHistory(pageable);
     }
 }

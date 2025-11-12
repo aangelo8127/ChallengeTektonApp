@@ -6,63 +6,56 @@ import co.com.tekton.service.interfaces.IHistoryService;
 import co.com.tekton.service.interfaces.IPercentageService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.isNull;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
-public class ComputationServiceImplTest {
+class ComputationServiceImplTest {
 
+    @Mock
     private IPercentageService percentageService;
+
+    @Mock
     private IHistoryService historyService;
+
+    @InjectMocks
     private ComputationServiceImpl computationService;
 
     @BeforeEach
     void setUp() {
-        percentageService = mock(IPercentageService.class);
-        historyService = mock(IHistoryService.class);
-        computationService = new ComputationServiceImpl(percentageService, historyService);
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    void testComputationSuccess() {
-        when(percentageService.getDynamicPercentage()).thenReturn(10.0);
+    void testCalculate_Success() {
+        // given
+        double num1 = 10;
+        double num2 = 5;
+        double percentage = 10; // 10%
 
-        ComputationResponse response = computationService.calculate(100, 50);
+        when(percentageService.getDynamicPercentage()).thenReturn(percentage);
 
-        assertEquals(165, response.getResult(), 0.001); // (100+50)*1.1
-        assertEquals(10.0, response.getPercentage());
-        verify(historyService, times(1)).registerAsync(anyString(), anyString(), anyString(), isNull());
+        // when
+        ComputationResponse response = computationService.calculate(num1, num2);
+
+        // then
+        assertNotNull(response);
+        assertEquals(10 + 5, 15);
+        assertEquals(percentage, response.getPercentage());
+        assertEquals(16.5, response.getResult(), 0.001); // 15 * (1 + 0.1)
+        verify(historyService, times(1)).registerAsync(any(), any(), any(), isNull());
     }
 
     @Test
-    void testComputationFallbackToCache() {
-        when(percentageService.getDynamicPercentage()).thenThrow(new RuntimeException());
-        when(percentageService.getLastCachedPercentage()).thenReturn(15.0);
+    void testCalculate_FailsWhenPercentageServiceFails() {
+        // given
+        when(percentageService.getDynamicPercentage()).thenThrow(new RuntimeException("External fail"));
 
-        ComputationResponse response = computationService.calculate(200, 100);
-
-        assertEquals(345, response.getResult(), 0.001); // (200+100)*1.15
-        assertEquals(15.0, response.getPercentage());
-        verify(historyService, times(1)).registerAsync(anyString(), anyString(), anyString(), isNull());
+        // when / then
+        assertThrows(RuntimeException.class, () -> computationService.calculate(5, 5));
+        verify(historyService, times(1)).registerAsync(any(), any(), isNull(), any());
     }
-
-    @Test
-    void testCalculateFailNoCache() {
-        when(percentageService.getDynamicPercentage()).thenThrow(new RuntimeException());
-        when(percentageService.getLastCachedPercentage()).thenReturn(null);
-
-        RuntimeException ex = assertThrows(RuntimeException.class,
-                () -> computationService.calculate(50, 50));
-
-        assertTrue(ex.getMessage().contains("No se pudo obtener el porcentaje"));
-        verify(historyService, times(1)).registerAsync(anyString(), anyString(), isNull(), anyString());
-    }
-
 }

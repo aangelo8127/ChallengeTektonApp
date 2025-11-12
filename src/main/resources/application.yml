@@ -3,12 +3,19 @@ spring:
     url: jdbc:postgresql://db:5432/challenge_db
     username: postgres
     password: postgres
+
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
+
+  data:
+    redis:
+      host: redis        # o 'localhost' si ejecutas localmente
+      port: 6379
+
   cache:
-    type: caffeine
+    type: redis          # cambia 'caffeine' por 'redis'
 
 server:
   port: 8080
